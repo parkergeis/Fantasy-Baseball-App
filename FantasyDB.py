@@ -3,9 +3,11 @@
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 
-url = "https://docs.google.com/spreadsheets/d/1DO97mLDDqkgq-QoQCuXgJfRefyocmHSI1-OJxBafR6U/edit?usp=sharing"
+# Create a connection object.
+conn = st.connection("gsheets", type=GSheetsConnection)
 
-conn = st.experimental_connection("gsheets", type=GSheetsConnection)
+df = conn.read()
 
-data = conn.read(spreadsheet=url)
-st.dataframe(data)
+# Print results.
+for row in df.itertuples():
+    st.write(f"{row.name} has a :{row.pet}:")
