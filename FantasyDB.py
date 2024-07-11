@@ -3,7 +3,7 @@
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 
-url = "hhttps://docs.google.com/spreadsheets/d/1DO97mLDDqkgq-QoQCuXgJfRefyocmHSI1-OJxBafR6U/edit?gid=0#gid=0"
+url = "https://docs.google.com/spreadsheets/d/1DO97mLDDqkgq-QoQCuXgJfRefyocmHSI1-OJxBafR6U/edit?usp=sharing"
 
 conn = st.experimental_connection("gsheets", type=GSheetsConnection)
 
