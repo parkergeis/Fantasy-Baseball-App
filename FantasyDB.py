@@ -1,13 +1,7 @@
-# example/st_app.py
+# Fantasy DB
 
 import streamlit as st
-from streamlit_gsheets import GSheetsConnection
 
-# Create a connection object.
-conn = st.connection("gsheets", type=GSheetsConnection)
+st.write('hi')
 
-df = conn.read()
 
-# Print results.
-for row in df.itertuples():
-    st.write(f"{row.name} has a :{row.pet}:")
