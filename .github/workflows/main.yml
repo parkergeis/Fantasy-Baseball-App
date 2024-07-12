@@ -1,0 +1,36 @@
+name: Hourly Excel Update
+
+on:
+  schedule:
+    - cron: '0 * * * *' # Runs every hour
+
+jobs:
+  update-excel:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          
+          timestamp=$(date +'%Y%m%d%H%M%S')
+          branch_name="update-excel-$timestamp"
+
+          git checkout -b "$branch_name"
+          git pull origin main  # Ensure you have the latest changes
+
+          git add data/FantasyData.xlsx
+
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update Excel file"; git push origin "$branch_name")
+
+          git checkout main
+          git merge --no-ff "$branch_name"
+          git push origin main
+
+          # delete the temporary branch
+          git branch -d "$branch_name"
+          git push origin --delete "$branch_name"
