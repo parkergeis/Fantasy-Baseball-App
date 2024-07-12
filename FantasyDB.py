@@ -24,8 +24,7 @@ def color_win(data):
 
 df_html = (CurrentWeeklyData.style
            .apply(lambda x: CurrentWeeklyData.apply(color_win, axis=1), subset=['HR_val'])
-           .format({'HR_val': '{}'}, escape=False)
-           ._repr_html_())
+           .format({'HR_val': '{}'}, escape=False))
 
 st.markdown(df_html, unsafe_allow_html=True)
 
