@@ -22,7 +22,11 @@ def highlight_hr_val(data):
     color = 'green' if data['HR'] == 'WIN' else 'red' if data['HR'] == 'LOSS' else ''
     return ['background-color: %s' % color if column == 'HR_val' else '' for column in data.index]
 
-st.dataframe(CurrentWeeklyData.style.apply(highlight_hr_val, axis=1))
+style_df = (CurrentWeeklyData.style.apply(highlight_hr_val, axis=1))
+
+style_df = style_df[['Week', 'Team', 'Opponent', 'HR_val']]
+
+st.dataframe(style_df)
 
 
 
