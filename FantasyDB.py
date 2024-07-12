@@ -18,17 +18,11 @@ Rosters = pd.read_excel('data/FantasyData.xlsx', sheet_name='Rosters')
 max_week = WeeklyData['Week'].max()
 CurrentWeeklyData = WeeklyData[WeeklyData['Week'] == max_week]
 
-def color_win(data):
-    color = 'green' if data['HR'] == 'WIN' else 'red' if data['HR'] == 'LOSS' else 'black'
-    return f'<td style="color: {color}">{data["HR_val"]}</td>'
+def highlight_hr_val(data):
+    color = 'green' if data['HR'] == 'WIN' else 'red' if data['HR'] == 'LOSS' else ''
+    return ['background-color: %s' % color if column == 'HR_val' else '' for column in data.index]
 
-df_html = (CurrentWeeklyData.style
-           .apply(lambda x: CurrentWeeklyData.apply(color_win, axis=1), subset=['HR_val'])
-           .format({'HR_val': '{}'}, escape=False))
-
-st.markdown(df_html, unsafe_allow_html=True)
-
-st.markdown(df_html, unsafe_allow_html=True)
+st.dataframe(CurrentWeeklyData.style.apply(highlight_hr_val, axis=1))
 
 
 
