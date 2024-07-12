@@ -40,8 +40,8 @@ for j in range(last_full_week):
         # Clean the team names
         df['Opponent'] = df['Opponent'].astype(str)
         df['Team'] = df['Team'].astype(str)
-        df['Opponent'] = df['Opponent'].str.replace('Team(', '').str.replace(')', '', regex=False)
-        df['Team'] = df['Team'].str.replace('Team(', '').str.replace(')', '', regex=False)
+        df['Opponent'] = df['Opponent'].str.replace('Team(', '', regex=False).str.replace(')', '', regex=False)
+        df['Team'] = df['Team'].str.replace('Team(', '', regex=False).str.replace(')', '', regex=False)
         
         # Add week information
         df.insert(0, 'Week', j + 1)
@@ -95,7 +95,7 @@ for i in range(2021, year+1):
     df2 = pd.DataFrame()
     df.rename(columns={0: "Team"}, inplace=True)
     df['Team'] = df['Team'].astype('str')
-    df['Team'] = df['Team'].str.replace('Team(', '').str.replace(')', '', regex=False)
+    df['Team'] = df['Team'].str.replace('Team(', '', regex=False).str.replace(')', '', regex=False)
     df['Rank'] = range(1,len(league.teams)+1)
     df['Year'] = i
     for j in range(0, len(league.teams)):
@@ -105,7 +105,7 @@ for i in range(2021, year+1):
         df2['Team'] = team.team_name
         df2.rename(columns={0: "Player"}, inplace=True)
         df2['Player'] = df2['Player'].astype('str')
-        df2['Player'] = df2['Player'].str.replace('Player(', '').str.replace(')', '', regex=False)
+        df2['Player'] = df2['Player'].str.replace('Player(', '', regex=False).str.replace(')', '', regex=False)
         rosters.append(df2)
 
         team = league.teams[j]
