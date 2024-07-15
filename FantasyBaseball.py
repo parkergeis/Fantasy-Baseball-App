@@ -133,3 +133,8 @@ with pd.ExcelWriter('FantasyData.xlsx') as writer:
     final_df.to_excel(writer, sheet_name='WeeklyData', index=False)
     final_df2.to_excel(writer, sheet_name='PreviousStandings', index=False)
     final_df3.to_excel(writer, sheet_name='Rosters', index=False)
+os.chdir('/Users/parkergeis/Personal/SportsStats/FantasyBaseball/data')
+with pd.ExcelWriter('FantasyData.xlsx') as writer:  
+    final_df.to_excel(writer, sheet_name='WeeklyData', index=False)
+    final_df2.to_excel(writer, sheet_name='PreviousStandings', index=False)
+    final_df3.to_excel(writer, sheet_name='Rosters', index=False)
