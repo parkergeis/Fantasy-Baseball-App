@@ -1,4 +1,9 @@
-# Fantasy DB
+# Fantasy DB - Season Scoreboard
+
+# Need team and week slicers added
+# Try to remove index
+
+
 
 import streamlit as st
 import pandas as pd

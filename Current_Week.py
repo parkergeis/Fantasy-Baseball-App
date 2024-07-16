@@ -19,8 +19,8 @@ CurrentWeeklyData['Points'] = CurrentWeeklyData['Points'].map('{:.1f}'.format)
 CurrentWeeklyData['OBP_val'] = CurrentWeeklyData['OBP_val'].map('{:.3f}'.format)
 CurrentWeeklyData['ERA_val'] = CurrentWeeklyData['ERA_val'].map('{:.2f}'.format)
 CurrentWeeklyData['WHIP_val'] = CurrentWeeklyData['WHIP_val'].map('{:.2f}'.format)
-CurrentWeeklyData = CurrentWeeklyData[['Week', 'Team', 'R_val', 'HR_val', 'RBI_val', 'SB_val', 'OBP_val', 'K_val', 'W_val', 'ERA_val', 'WHIP_val', 'SVHD_val', 'Opponent', 'Points', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD']]
-CurrentWeeklyData.columns = ['Week', 'Team', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD', 'Opponent', 'Points', 'Ro', 'HRo', 'RBIo', 'SBo', 'OBPo', 'Ko', 'Wo', 'ERAo', 'WHIPo', 'SVHDo']
+CurrentWeeklyData = CurrentWeeklyData[['Team', 'R_val', 'HR_val', 'RBI_val', 'SB_val', 'OBP_val', 'K_val', 'W_val', 'ERA_val', 'WHIP_val', 'SVHD_val', 'Opponent', 'Points', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD']]
+CurrentWeeklyData.columns = ['Team', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD', 'Opponent', 'Points', 'Ro', 'HRo', 'RBIo', 'SBo', 'OBPo', 'Ko', 'Wo', 'ERAo', 'WHIPo', 'SVHDo']
 CurrentWeeklyData.sort_values(by='Points', ascending=False, inplace=True)
 CurrentWeeklyData.reset_index(drop=True, inplace=True)
 CurrentWeeklyData.index = CurrentWeeklyData.index + 1
