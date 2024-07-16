@@ -1,36 +1,26 @@
-# Fantasy DB
+# Fantasy DB - Current Week - Homepage
 
 import streamlit as st
 import pandas as pd
-import altair as alt
-import plotly.express as px
-from IPython.display import display, HTML
 
 st.set_page_config(
     page_title="Fantasy Dashboard",
     layout="wide")
 
-alt.themes.enable("dark")
-
-col = st.columns((.9, 9.3, .9), gap='medium')
-
 # Import data - needs manually uploaded and committed to GitHub
 WeeklyData = pd.read_excel('data/FantasyData.xlsx', sheet_name='WeeklyData')
-Standings = pd.read_excel('data/FantasyData.xlsx', sheet_name='PreviousStandings')
-Rosters = pd.read_excel('data/FantasyData.xlsx', sheet_name='Rosters')
-
-WeeklyData['Points'] = WeeklyData.apply(lambda row: (row == 'WIN').sum(), axis=1) + (WeeklyData.apply(lambda row: (row == 'TIE').sum(), axis=1) * 0.5)
-WeeklyData['Points'] = WeeklyData['Points'].map('{:.1f}'.format)
-WeeklyData['OBP_val'] = WeeklyData['OBP_val'].map('{:.3f}'.format)
-WeeklyData['ERA_val'] = WeeklyData['ERA_val'].map('{:.2f}'.format)
-WeeklyData['WHIP_val'] = WeeklyData['WHIP_val'].map('{:.2f}'.format)
-WeeklyData = WeeklyData[['Week', 'Team', 'R_val', 'HR_val', 'RBI_val', 'SB_val', 'OBP_val', 'K_val', 'W_val', 'ERA_val', 'WHIP_val', 'SVHD_val', 'Opponent', 'Points', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD']]
-WeeklyData.columns = ['Week', 'Team', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD', 'Opponent', 'Points', 'Ro', 'HRo', 'RBIo', 'SBo', 'OBPo', 'Ko', 'Wo', 'ERAo', 'WHIPo', 'SVHDo']
 
 # Prepare Current Scoreboard Dashboard
 max_week = WeeklyData['Week'].max()
 CurrentWeeklyData = WeeklyData[WeeklyData['Week'] == max_week]
 CurrentWeeklyData = CurrentWeeklyData.drop(['Week'], axis=1)
+CurrentWeeklyData['Points'] = CurrentWeeklyData.apply(lambda row: (row == 'WIN').sum(), axis=1) + (CurrentWeeklyData.apply(lambda row: (row == 'TIE').sum(), axis=1) * 0.5)
+CurrentWeeklyData['Points'] = CurrentWeeklyData['Points'].map('{:.1f}'.format)
+CurrentWeeklyData['OBP_val'] = CurrentWeeklyData['OBP_val'].map('{:.3f}'.format)
+CurrentWeeklyData['ERA_val'] = CurrentWeeklyData['ERA_val'].map('{:.2f}'.format)
+CurrentWeeklyData['WHIP_val'] = CurrentWeeklyData['WHIP_val'].map('{:.2f}'.format)
+CurrentWeeklyData = CurrentWeeklyData[['Week', 'Team', 'R_val', 'HR_val', 'RBI_val', 'SB_val', 'OBP_val', 'K_val', 'W_val', 'ERA_val', 'WHIP_val', 'SVHD_val', 'Opponent', 'Points', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD']]
+CurrentWeeklyData.columns = ['Week', 'Team', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD', 'Opponent', 'Points', 'Ro', 'HRo', 'RBIo', 'SBo', 'OBPo', 'Ko', 'Wo', 'ERAo', 'WHIPo', 'SVHDo']
 CurrentWeeklyData.sort_values(by='Points', ascending=False, inplace=True)
 CurrentWeeklyData.reset_index(drop=True, inplace=True)
 CurrentWeeklyData.index = CurrentWeeklyData.index + 1
@@ -59,11 +49,10 @@ style_df = CurrentWeeklyData.style.apply(highlight_val, col='Ro', val_col='R', a
 .apply(highlight_max, subset=['W'], axis=0).apply(highlight_min, subset=['ERA'], axis=0)\
 .apply(highlight_min, subset=['WHIP'], axis=0).apply(highlight_max, subset=['SVHD'], axis=0).hide_index()
 
-with col[1]:
-    st.markdown('<h3 style="text-align: center;">Current Scoreboard</h3>', unsafe_allow_html=True)
-    container = st.container()
-    with container:
-        st.dataframe(style_df, height=457)  # Specify height here
+st.markdown('<h3 style="text-align: center;">Current Scoreboard</h3>', unsafe_allow_html=True)
+container = st.container()
+with container:
+    st.dataframe(style_df, height=457, width=1500)  # Specify height here
         
 # st.write("") # Use to add gaps
 
