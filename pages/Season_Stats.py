@@ -1,7 +1,11 @@
 # Fantasy DB - Season Scoreboard
 
 # Need team and week slicers added
+# Add record column
+# Add better sort
 # Try to remove index
+# Add weekly winners, overviews, legacy + rosters
+# Add maybe some cool visuals
 
 
 
@@ -17,14 +21,14 @@ WeeklyData = pd.read_excel('data/FantasyData.xlsx', sheet_name='WeeklyData')
 
 max_week = WeeklyData['Week'].max()
 PreviousWeeklyData = WeeklyData[WeeklyData['Week'] != max_week]
+PreviousWeeklyData['Record'] = PreviousWeeklyData.apply(lambda row: (row == 'WIN').sum(), axis=1).astype(str) + '-' + (PreviousWeeklyData.apply(lambda row: (row == 'LOSS').sum(), axis=1)).astype(str) + '-' + (PreviousWeeklyData.apply(lambda row: (row == 'TIE').sum(), axis=1)).astype(str)
 PreviousWeeklyData['Points'] = PreviousWeeklyData.apply(lambda row: (row == 'WIN').sum(), axis=1) + (PreviousWeeklyData.apply(lambda row: (row == 'TIE').sum(), axis=1) * 0.5)
 PreviousWeeklyData['Points'] = PreviousWeeklyData['Points'].map('{:.1f}'.format)
 PreviousWeeklyData['OBP_val'] = PreviousWeeklyData['OBP_val'].map('{:.3f}'.format)
 PreviousWeeklyData['ERA_val'] = PreviousWeeklyData['ERA_val'].map('{:.2f}'.format)
 PreviousWeeklyData['WHIP_val'] = PreviousWeeklyData['WHIP_val'].map('{:.2f}'.format)
-PreviousWeeklyData = PreviousWeeklyData[['Week', 'Team', 'R_val', 'HR_val', 'RBI_val', 'SB_val', 'OBP_val', 'K_val', 'W_val', 'ERA_val', 'WHIP_val', 'SVHD_val', 'Opponent', 'Points', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD']]
-PreviousWeeklyData.columns = ['Week', 'Team', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD', 'Opponent', 'Points', 'Ro', 'HRo', 'RBIo', 'SBo', 'OBPo', 'Ko', 'Wo', 'ERAo', 'WHIPo', 'SVHDo']
-PreviousWeeklyData.sort_values(by='Team')
+PreviousWeeklyData = PreviousWeeklyData[['Week', 'Team', 'Record', 'R_val', 'HR_val', 'RBI_val', 'SB_val', 'OBP_val', 'K_val', 'W_val', 'ERA_val', 'WHIP_val', 'SVHD_val', 'Opponent', 'Points', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD']]
+PreviousWeeklyData.columns = ['Week', 'Team', 'Record', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD', 'Opponent', 'Points', 'Ro', 'HRo', 'RBIo', 'SBo', 'OBPo', 'Ko', 'Wo', 'ERAo', 'WHIPo', 'SVHDo']
 PreviousWeeklyData.reset_index(drop=True, inplace=True)
 PreviousWeeklyData.index = PreviousWeeklyData.index + 1
 
