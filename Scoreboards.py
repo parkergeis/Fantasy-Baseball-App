@@ -1,5 +1,7 @@
 # Fantasy DB - Scoreboards - Homepage
 
+# Add averages
+
 import streamlit as st
 import pandas as pd
 

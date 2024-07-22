@@ -11,7 +11,7 @@ st.set_page_config(
 # Import data - needs manually uploaded and committed to GitHub
 WeeklyData = pd.read_excel('data/FantasyData.xlsx', sheet_name='WeeklyData')
 
-st.markdown('<h3 style="text-align: center;">Standings</h3>', unsafe_allow_html=True)
+st.markdown('<h3 style="text-align: center;">Legacy</h3>', unsafe_allow_html=True)
 container = st.container()
 with container:
     st.write("")
