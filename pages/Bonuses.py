@@ -15,6 +15,8 @@ WeeklyData = pd.read_excel('data/FantasyData.xlsx', sheet_name='WeeklyData')
 def count_wins(series):
     return (series == 'WIN').sum()
 
+max_week = WeeklyData['Week'].max()
+WeeklyData = WeeklyData[WeeklyData['Week'] != max_week]
 WeeklyData['Record'] = WeeklyData.apply(lambda row: (row == 'WIN').sum(), axis=1).astype(str) + '-' + (WeeklyData.apply(lambda row: (row == 'LOSS').sum(), axis=1)).astype(str) + '-' + (WeeklyData.apply(lambda row: (row == 'TIE').sum(), axis=1)).astype(str)
 WeeklyData['Points'] = WeeklyData.apply(lambda row: (row == 'WIN').sum(), axis=1) + (WeeklyData.apply(lambda row: (row == 'TIE').sum(), axis=1) * 0.5)
 
