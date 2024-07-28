@@ -103,6 +103,7 @@ for i in range(2021, year+1):
         df2 = pd.DataFrame(team.roster)
         df2['Year'] = i
         df2['Team'] = team.team_name
+        df2['Owner'] = team.owners[0]['firstName'] + " " + team.owners[0]['lastName']
         df2.rename(columns={0: "Player"}, inplace=True)
         df2['Player'] = df2['Player'].astype('str')
         df2['Player'] = df2['Player'].str.replace('Player(', '', regex=False).str.replace(')', '', regex=False)

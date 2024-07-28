@@ -1,25 +1,32 @@
 # Fantasy DB - Scoreboards - Homepage
 
 # Add averages
+# Add reset filters button
+# Add filter/button to see current/previous?
 
 import streamlit as st
 import pandas as pd
+import altair as alt
+import numpy as np
 
 st.set_page_config(
     page_title="Fantasy Dashboard",
     layout="wide",
     initial_sidebar_state="auto")
+alt.themes.enable("dark")
 
 # Import data - needs manually uploaded and committed to GitHub
 WeeklyData = pd.read_excel('data/FantasyData.xlsx', sheet_name='WeeklyData')
+WeeklyData['Record'] = WeeklyData.apply(lambda row: (row == 'WIN').sum(), axis=1).astype(str) + '-' + (WeeklyData.apply(lambda row: (row == 'LOSS').sum(), axis=1)).astype(str) + '-' + (WeeklyData.apply(lambda row: (row == 'TIE').sum(), axis=1)).astype(str)
+WeeklyData['Points'] = WeeklyData.apply(lambda row: (row == 'WIN').sum(), axis=1) + (WeeklyData.apply(lambda row: (row == 'TIE').sum(), axis=1) * 0.5)
 
 # Filters
 with st.sidebar:  
     team_list = list(WeeklyData.Team.unique())[::-1]
-    team_list.append('All')
+    team_list.append('1All')
     team_list.sort()
     selected_team = st.selectbox('Team', team_list, index=0)
-    if selected_team == 'All':
+    if selected_team == '1All':
         WeeklyData = WeeklyData
     else:
         WeeklyData = WeeklyData[WeeklyData.Team == selected_team]
@@ -27,39 +34,26 @@ with st.sidebar:
     week_list = list(WeeklyData.Week.unique())[::-1]
     week_list.append(0)
     week_list.sort()
-    selected_week = st.selectbox('Week (select 0 for all previous)', week_list, index=0)
+    selected_week = st.selectbox('Week (select 0 for all previous)', week_list, index=len(week_list)-1)
 
 # Prepare Scoreboard Dashboard
 max_week = WeeklyData['Week'].max()
-CurrentWeeklyData = WeeklyData[WeeklyData['Week'] == max_week]
-CurrentWeeklyData = CurrentWeeklyData.drop(['Week'], axis=1)
-CurrentWeeklyData['Record'] = CurrentWeeklyData.apply(lambda row: (row == 'WIN').sum(), axis=1).astype(str) + '-' + (CurrentWeeklyData.apply(lambda row: (row == 'LOSS').sum(), axis=1)).astype(str) + '-' + (CurrentWeeklyData.apply(lambda row: (row == 'TIE').sum(), axis=1)).astype(str)
-CurrentWeeklyData['Points'] = CurrentWeeklyData.apply(lambda row: (row == 'WIN').sum(), axis=1) + (CurrentWeeklyData.apply(lambda row: (row == 'TIE').sum(), axis=1) * 0.5)
-CurrentWeeklyData['OBP_val'] = CurrentWeeklyData['OBP_val'].map('{:.3f}'.format)
-CurrentWeeklyData['ERA_val'] = CurrentWeeklyData['ERA_val'].map('{:.2f}'.format)
-CurrentWeeklyData['WHIP_val'] = CurrentWeeklyData['WHIP_val'].map('{:.2f}'.format)
-CurrentWeeklyData = CurrentWeeklyData[['Team', 'Record', 'R_val', 'HR_val', 'RBI_val', 'SB_val', 'OBP_val', 'K_val', 'W_val', 'ERA_val', 'WHIP_val', 'SVHD_val', 'Opponent', 'Points', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD']]
-CurrentWeeklyData.columns = ['Team', 'Record', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD', 'Opponent', 'Points', 'Ro', 'HRo', 'RBIo', 'SBo', 'OBPo', 'Ko', 'Wo', 'ERAo', 'WHIPo', 'SVHDo']
-CurrentWeeklyData.sort_values(by='Points', ascending=False, inplace=True)
-CurrentWeeklyData.reset_index(drop=True, inplace=True)
-CurrentWeeklyData.index = CurrentWeeklyData.index + 1
-CurrentWeeklyData.index.name = 'Rank'
 
 if selected_week == 0:
     PreviousWeeklyData = WeeklyData[WeeklyData['Week'] != max_week]
+    PreviousWeeklyData = PreviousWeeklyData.sort_values(by=['Team', 'Week'])
+    columns = ['Week', 'Team', 'Record', 'R', 'HR', 'RBI', 'SB', 'OBP', 'W', 'K', 'ERA', 'WHIP', 'SVHD', 'Opponent']
+    PreviousWeeklyData = PreviousWeeklyData[['Week', 'Team', 'Record', 'R_val', 'HR_val', 'RBI_val', 'SB_val', 'OBP_val', 'K_val', 'W_val', 'ERA_val', 'WHIP_val', 'SVHD_val', 'Opponent', 'Points', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD']]
+    PreviousWeeklyData.columns = ['Week', 'Team', 'Record', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD', 'Opponent', 'Points', 'Ro', 'HRo', 'RBIo', 'SBo', 'OBPo', 'Ko', 'Wo', 'ERAo', 'WHIPo', 'SVHDo']
+    PreviousWeeklyData.sort_values(by=['Team', 'Week'], inplace=True)
 else:
     PreviousWeeklyData = WeeklyData[WeeklyData['Week'] == selected_week]
-PreviousWeeklyData['Record'] = PreviousWeeklyData.apply(lambda row: (row == 'WIN').sum(), axis=1).astype(str) + '-' + (PreviousWeeklyData.apply(lambda row: (row == 'LOSS').sum(), axis=1)).astype(str) + '-' + (PreviousWeeklyData.apply(lambda row: (row == 'TIE').sum(), axis=1)).astype(str)
-PreviousWeeklyData['Points'] = PreviousWeeklyData.apply(lambda row: (row == 'WIN').sum(), axis=1) + (PreviousWeeklyData.apply(lambda row: (row == 'TIE').sum(), axis=1) * 0.5)
-PreviousWeeklyData['OBP_val'] = PreviousWeeklyData['OBP_val'].map('{:.3f}'.format)
-PreviousWeeklyData['ERA_val'] = PreviousWeeklyData['ERA_val'].map('{:.2f}'.format)
-PreviousWeeklyData['WHIP_val'] = PreviousWeeklyData['WHIP_val'].map('{:.2f}'.format)
-PreviousWeeklyData = PreviousWeeklyData[['Week', 'Team', 'Record', 'R_val', 'HR_val', 'RBI_val', 'SB_val', 'OBP_val', 'K_val', 'W_val', 'ERA_val', 'WHIP_val', 'SVHD_val', 'Opponent', 'Points', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD']]
-PreviousWeeklyData.columns = ['Week', 'Team', 'Record', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD', 'Opponent', 'Points', 'Ro', 'HRo', 'RBIo', 'SBo', 'OBPo', 'Ko', 'Wo', 'ERAo', 'WHIPo', 'SVHDo']
-PreviousWeeklyData = PreviousWeeklyData.sort_values(by=['Team', 'Week'])
-PreviousWeeklyData.reset_index(drop=True, inplace=True)
-PreviousWeeklyData.index = PreviousWeeklyData.index + 1
-PreviousWeeklyData.index.name = 'Order'
+    PreviousWeeklyData = PreviousWeeklyData.drop(['Week'], axis=1)
+    columns = ['Team', 'Record', 'R', 'HR', 'RBI', 'SB', 'OBP', 'W', 'K', 'ERA', 'WHIP', 'SVHD', 'Opponent']
+    PreviousWeeklyData = PreviousWeeklyData[['Team', 'Record', 'R_val', 'HR_val', 'RBI_val', 'SB_val', 'OBP_val', 'K_val', 'W_val', 'ERA_val', 'WHIP_val', 'SVHD_val', 'Opponent', 'Points', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD']]
+    PreviousWeeklyData.columns = ['Team', 'Record', 'R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD', 'Opponent', 'Points', 'Ro', 'HRo', 'RBIo', 'SBo', 'OBPo', 'Ko', 'Wo', 'ERAo', 'WHIPo', 'SVHDo']
+    PreviousWeeklyData.sort_values(by='Points', ascending=False, inplace=True)
+
 
 # Conditional formatting based on results
 def highlight_val(data, col, val_col):
@@ -76,8 +70,8 @@ def highlight_min(s):
     return ['color: gold' if v else '' for v in is_min]
 
 # Applying conditional formats
-if selected_team == 'All':
-    style_df = CurrentWeeklyData.style.apply(highlight_val, col='Ro', val_col='R', axis=1).apply(highlight_val, col='HRo', val_col='HR', axis=1)\
+if selected_team == '1All':
+    style_df = PreviousWeeklyData.style.apply(highlight_val, col='Ro', val_col='R', axis=1).apply(highlight_val, col='HRo', val_col='HR', axis=1)\
     .apply(highlight_val, col='RBIo', val_col='RBI', axis=1).apply(highlight_val, col='SBo', val_col='SB', axis=1)\
     .apply(highlight_val, col='OBPo', val_col='OBP', axis=1).apply(highlight_val, col='Ko', val_col='K', axis=1)\
     .apply(highlight_val, col='Wo', val_col='W', axis=1).apply(highlight_val, col='ERAo', val_col='ERA', axis=1)\
@@ -89,45 +83,57 @@ if selected_team == 'All':
     .apply(highlight_max, subset=['W'], axis=0).apply(highlight_min, subset=['ERA'], axis=0)\
     .apply(highlight_min, subset=['WHIP'], axis=0).apply(highlight_max, subset=['SVHD'], axis=0)
 else:
-    style_df = CurrentWeeklyData.style.apply(highlight_val, col='Ro', val_col='R', axis=1).apply(highlight_val, col='HRo', val_col='HR', axis=1)\
+    style_df = PreviousWeeklyData.style.apply(highlight_val, col='Ro', val_col='R', axis=1).apply(highlight_val, col='HRo', val_col='HR', axis=1)\
     .apply(highlight_val, col='RBIo', val_col='RBI', axis=1).apply(highlight_val, col='SBo', val_col='SB', axis=1)\
     .apply(highlight_val, col='OBPo', val_col='OBP', axis=1).apply(highlight_val, col='Ko', val_col='K', axis=1)\
     .apply(highlight_val, col='Wo', val_col='W', axis=1).apply(highlight_val, col='ERAo', val_col='ERA', axis=1)\
     .apply(highlight_val, col='WHIPo', val_col='WHIP', axis=1).apply(highlight_val, col='SVHDo', val_col='SVHD', axis=1)\
     .apply(highlight_records, col='Points', val_col='Record', axis=1)
 
+cols = ['R', 'HR', 'RBI', 'SB', 'OBP', 'K', 'W', 'ERA', 'WHIP', 'SVHD']
+averages = [PreviousWeeklyData[col].mean() if col in PreviousWeeklyData else np.nan for col in cols]
 
-if selected_team == 'All' or selected_week == 0:
-    prev_style_df = PreviousWeeklyData.style.apply(highlight_val, col='Ro', val_col='R', axis=1).apply(highlight_val, col='HRo', val_col='HR', axis=1)\
-    .apply(highlight_val, col='RBIo', val_col='RBI', axis=1).apply(highlight_val, col='SBo', val_col='SB', axis=1)\
-    .apply(highlight_val, col='OBPo', val_col='OBP', axis=1).apply(highlight_val, col='Ko', val_col='K', axis=1)\
-    .apply(highlight_val, col='Wo', val_col='W', axis=1).apply(highlight_val, col='ERAo', val_col='ERA', axis=1)\
-    .apply(highlight_val, col='WHIPo', val_col='WHIP', axis=1).apply(highlight_val, col='SVHDo', val_col='SVHD', axis=1)\
-    .apply(highlight_records, col='Points', val_col='Record', axis=1)\
-    .apply(highlight_max, subset=['R'], axis=0).apply(highlight_max, subset=['HR'], axis=0)\
-    .apply(highlight_max, subset=['RBI'], axis=0).apply(highlight_max, subset=['SB'], axis=0)\
-    .apply(highlight_max, subset=['OBP'], axis=0).apply(highlight_max, subset=['K'], axis=0)\
-    .apply(highlight_max, subset=['W'], axis=0).apply(highlight_min, subset=['ERA'], axis=0)\
-    .apply(highlight_min, subset=['WHIP'], axis=0).apply(highlight_max, subset=['SVHD'], axis=0)
-else:
-    prev_style_df = PreviousWeeklyData.style.apply(highlight_val, col='Ro', val_col='R', axis=1).apply(highlight_val, col='HRo', val_col='HR', axis=1)\
-    .apply(highlight_val, col='RBIo', val_col='RBI', axis=1).apply(highlight_val, col='SBo', val_col='SB', axis=1)\
-    .apply(highlight_val, col='OBPo', val_col='OBP', axis=1).apply(highlight_val, col='Ko', val_col='K', axis=1)\
-    .apply(highlight_val, col='Wo', val_col='W', axis=1).apply(highlight_val, col='ERAo', val_col='ERA', axis=1)\
-    .apply(highlight_val, col='WHIPo', val_col='WHIP', axis=1).apply(highlight_val, col='SVHDo', val_col='SVHD', axis=1)\
-    .apply(highlight_records, col='Points', val_col='Record', axis=1)
+# Create a new DataFrame for averages
+df_averages = pd.DataFrame([averages], columns=cols)
+df_averages['R'] = df_averages['R'].round(0).astype(int)
+df_averages['HR'] = df_averages['HR'].round(0).astype(int)
+df_averages['RBI'] = df_averages['RBI'].round(0).astype(int)
+df_averages['SB'] = df_averages['SB'].round(0).astype(int)
+df_averages['OBP'] = df_averages['OBP'].round(3).astype(float)
+df_averages['K'] = df_averages['K'].round(0).astype(int)
+df_averages['W'] = df_averages['W'].round(0).astype(int)
+df_averages['ERA'] = df_averages['ERA'].round(2).astype(float)
+df_averages['WHIP'] = df_averages['WHIP'].round(2).astype(float)
+df_averages['SVHD'] = df_averages['SVHD'].round(0).astype(int)
 
 # Creating visuals
-container = st.container()
-with container:
-    st.markdown('<h3 style="text-align: center;">Current Scoreboard</h3>', unsafe_allow_html=True)
-    st.dataframe(style_df, height=457, width=1500)
-    st.write("")
-    st.write("")
-    st.divider()
-    st.write("")
-    st.write("")
-    st.markdown('<h3 style="text-align: center;">Season Scoreboard</h3>', unsafe_allow_html=True)
-    st.dataframe(prev_style_df, height=457, width=1500)
+st.markdown('<h3 style="text-align: center;">League Average</h3>', unsafe_allow_html=True)
+col = st.columns((1, 1, 1, 1, 1, 1, 1, 1, 1, 1))
+with col[0]:
+    st.metric(label = 'R', value=df_averages['R'])
+with col[1]:
+    st.metric(label = 'HR', value=df_averages['HR'])
+with col[2]:
+    st.metric(label = 'RBI', value=df_averages['RBI'])
+with col[3]:
+    st.metric(label = 'SB', value=df_averages['SB'])
+with col[4]:
+    st.metric(label = 'OBP', value=df_averages['OBP'])
+with col[5]:
+    st.metric(label = 'K', value=df_averages['K'])
+with col[6]:
+    st.metric(label = 'W', value=df_averages['W'])
+with col[7]:
+    st.metric(label = 'ERA', value=df_averages['ERA'])
+with col[8]:
+    st.metric(label = 'WHIP', value=df_averages['WHIP'])
+with col[9]:
+    st.metric(label = 'SVHD', value=df_averages['SVHD'])
+
+st.markdown('<h3 style="text-align: center;">Scoreboard</h3>', unsafe_allow_html=True)
+st.dataframe(style_df, 
+                height=457, width=2000, 
+                column_order=columns,
+                hide_index=True)    
 
 

@@ -62,20 +62,38 @@ WeeklyWinners_max['Prize'] += WeeklyWinners_max['Rollover']
 WeeklyWinners_max = WeeklyWinners_max.drop(columns='Rollover')
 
 WeeklyWinners = WeeklyWinners_max[['Week', 'Team', 'Record', 'Prize']]
-WeeklyWinners.reset_index(drop=True, inplace=True)
+WeeklyWinners.columns = ['Week', 'Team', 'Record', '$']
 
-TotalPrizes_test = WeeklyWinners[['Team', 'Prize']]
+TotalPrizes_test = WeeklyWinners[['Team', '$']]
 TotalPrizes = TotalPrizes_test.groupby(by='Team').sum()
 TotalPrizes['Wins'] = TotalPrizes_test.groupby(by='Team').count()
-TotalPrizes.sort_values(by=['Prize', 'Wins'], ascending=False,inplace=True)
-TotalPrizes.columns = ['Winnings', 'Weeks Won']
+TotalPrizes.sort_values(by=['$', 'Wins'], ascending=False,inplace=True)
+TotalPrizes.reset_index(inplace=True)
 
 col = st.columns((4, 4), gap='medium')
 with col[0]:
-    st.markdown('<h3 style="text-align: left;">Weekly Winners</h3>', unsafe_allow_html=True)
-    st.dataframe(WeeklyWinners)
+    st.markdown('<h3 style="text-align: center;">Weekly Winners</h3>', unsafe_allow_html=True)
+    st.dataframe(WeeklyWinners, hide_index=True)
+
 with col[1]:
-    st.markdown('<h3 style="text-align: left;">Winnings</h3>', unsafe_allow_html=True)
-    st.dataframe(TotalPrizes)
+    st.markdown('<h3 style="text-align: center;">Winnings</h3>', unsafe_allow_html=True)
+    st.dataframe(TotalPrizes,
+                column_order=("Team", "$", "Wins"),
+                hide_index=True,
+                width=None,
+                column_config={
+                "Team": st.column_config.TextColumn(
+                    "Team",
+                ),
+                "Wins": st.column_config.TextColumn(
+                    "Wins",
+                ),
+                "$": st.column_config.ProgressColumn(
+                    "$",
+                    format="%f",
+                    min_value=0,
+                    max_value=(max(WeeklyWinners.Week)-1)*5,
+                    )}
+                )
 
 
