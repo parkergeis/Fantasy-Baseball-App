@@ -23,10 +23,10 @@ Curr['Year'] = Curr['Year'].astype(str)
 
 col = st.columns((1, 1), gap='medium')
 with col[0]:
-    st.markdown('<h3 style="text-align: center;">Current Standings</h3>', unsafe_allow_html=True)
+    st.markdown('<h3 style="text-align: left;">Current Standings</h3>', unsafe_allow_html=True)
     st.dataframe(Curr, hide_index=True, column_order=['Rank', 'Team', 'Record'])
 with col[1]:
-    st.markdown('<h3 style="text-align: center;">Previous Standings</h3>', unsafe_allow_html=True)
+    st.markdown('<h3 style="text-align: left;">Previous Standings</h3>', unsafe_allow_html=True)
     st.dataframe(Prev, hide_index=True)
 
 

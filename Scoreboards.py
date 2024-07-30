@@ -1,8 +1,7 @@
 # Fantasy DB - Scoreboards - Homepage
 
-# Add averages
-# Add reset filters button
 # Add filter/button to see current/previous?
+# Import data logic into here + others
 
 import streamlit as st
 import pandas as pd
@@ -16,26 +15,37 @@ st.set_page_config(
 alt.themes.enable("dark")
 
 # Import data - needs manually uploaded and committed to GitHub
-WeeklyData = pd.read_excel('data/FantasyData.xlsx', sheet_name='WeeklyData')
-WeeklyData['Record'] = WeeklyData.apply(lambda row: (row == 'WIN').sum(), axis=1).astype(str) + '-' + (WeeklyData.apply(lambda row: (row == 'LOSS').sum(), axis=1)).astype(str) + '-' + (WeeklyData.apply(lambda row: (row == 'TIE').sum(), axis=1)).astype(str)
-WeeklyData['Points'] = WeeklyData.apply(lambda row: (row == 'WIN').sum(), axis=1) + (WeeklyData.apply(lambda row: (row == 'TIE').sum(), axis=1) * 0.5)
+WeeklyData_full = pd.read_excel('data/FantasyData.xlsx', sheet_name='WeeklyData')
+WeeklyData_full['Record'] = WeeklyData_full.apply(lambda row: (row == 'WIN').sum(), axis=1).astype(str) + '-' + (WeeklyData_full.apply(lambda row: (row == 'LOSS').sum(), axis=1)).astype(str) + '-' + (WeeklyData_full.apply(lambda row: (row == 'TIE').sum(), axis=1)).astype(str)
+WeeklyData_full['Points'] = WeeklyData_full.apply(lambda row: (row == 'WIN').sum(), axis=1) + (WeeklyData_full.apply(lambda row: (row == 'TIE').sum(), axis=1) * 0.5)
 
 # Filters
 with st.sidebar:  
-    team_list = list(WeeklyData.Team.unique())[::-1]
+    def reset_filters():
+            st.session_state.team = "1All"
+            st.session_state.week = WeeklyData_full['Week'].max()
+            selected_team = '1All'
+            selected_week = WeeklyData_full['Week'].max()
+            WeeklyData = WeeklyData_full
+    st.button('Reset Filters', on_click=reset_filters)
+    
+    team_list = list(WeeklyData_full.Team.unique())[::-1]
     team_list.append('1All')
     team_list.sort()
-    selected_team = st.selectbox('Team', team_list, index=0)
+    selected_team = st.selectbox('Team', team_list, index=0, key='team')
     if selected_team == '1All':
-        WeeklyData = WeeklyData
+        WeeklyData = WeeklyData_full
     else:
-        WeeklyData = WeeklyData[WeeklyData.Team == selected_team]
+        WeeklyData = WeeklyData_full[WeeklyData_full.Team == selected_team]
 
     week_list = list(WeeklyData.Week.unique())[::-1]
     week_list.append(0)
     week_list.sort()
-    selected_week = st.selectbox('Week (select 0 for all previous)', week_list, index=len(week_list)-1)
-
+    # If team is selected, default to week 0, else current week
+    if selected_team == '1All':
+        selected_week = st.selectbox('Week (select 0 for all previous)', week_list, index=len(week_list)-1, key='week')
+    else:
+        selected_week = st.selectbox('Week (select 0 for all previous)', week_list, index=0, key='week')
 # Prepare Scoreboard Dashboard
 max_week = WeeklyData['Week'].max()
 
@@ -107,7 +117,7 @@ df_averages['WHIP'] = df_averages['WHIP'].round(2).astype(float)
 df_averages['SVHD'] = df_averages['SVHD'].round(0).astype(int)
 
 # Creating visuals
-st.markdown('<h3 style="text-align: center;">League Average</h3>', unsafe_allow_html=True)
+st.markdown('<h3 style="text-align: center;">Averages</h3>', unsafe_allow_html=True)
 col = st.columns((1, 1, 1, 1, 1, 1, 1, 1, 1, 1))
 with col[0]:
     st.metric(label = 'R', value=df_averages['R'])
@@ -120,9 +130,9 @@ with col[3]:
 with col[4]:
     st.metric(label = 'OBP', value=df_averages['OBP'])
 with col[5]:
-    st.metric(label = 'K', value=df_averages['K'])
-with col[6]:
     st.metric(label = 'W', value=df_averages['W'])
+with col[6]:
+    st.metric(label = 'K', value=df_averages['K'])
 with col[7]:
     st.metric(label = 'ERA', value=df_averages['ERA'])
 with col[8]:
