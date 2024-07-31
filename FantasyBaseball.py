@@ -89,15 +89,26 @@ history = []
 rosters = []
 records = []
 for i in range(2021, year+1):
+    # Initialize each year of league
     league = League(league_id=929702235, year=i, swid='5479be06-0e9f-49de-b677-cf8a388a3723', espn_s2='AECG5emtArOlIVusvFSalUmzw1PS5YdPit0EsHfFjMqmVKWmypzFMZ25NYOZ4FDUtj%2B7bVL2s55sZzJW8D7eEoFP4mFWRX9dA65s4DqbT7uKfX%2B7ld5AWgf7pM9qrbVU3PUNnt%2BCb2Aqmwqc%2BiZj8SD5xXAVXXBQuAY5UN6i%2B%2BeMT%2BgfGM3MFI7v2zH7cd85%2BOos82rHMD34i9LUkMpJTftCpsRMwgrG9MZyvxKTSahcI4X7t2%2BJjfcFaD9z7hyastRCz2xBpWvtSVbxNNgyXxbn')
+    # Gather historical information
     standings = league.standings()
     df = pd.DataFrame(standings)
-    df2 = pd.DataFrame()
     df.rename(columns={0: "Team"}, inplace=True)
     df['Team'] = df['Team'].astype('str')
     df['Team'] = df['Team'].str.replace('Team(', '', regex=False).str.replace(')', '', regex=False)
     df['Rank'] = range(1,len(league.teams)+1)
     df['Year'] = i
+    # Assign free agent list to rosters tab
+    free_agents = pd.DataFrame(league.free_agents())
+    free_agents['Team'] = 'Free Agent'
+    free_agents['Owner'] = 'None'
+    free_agents['Year'] = i
+    free_agents.rename(columns={0: "Player"}, inplace=True)
+    free_agents['Player'] = free_agents['Player'].astype('str')
+    free_agents['Player'] = free_agents['Player'].str.replace('Player(', '', regex=False).str.replace(')', '', regex=False)
+    rosters.append(free_agents)
+    # Iterate each team's roster and record
     for j in range(0, len(league.teams)):
         team = league.teams[j]
         df2 = pd.DataFrame(team.roster)
@@ -121,6 +132,7 @@ for i in range(2021, year+1):
         records.append(temp)
         
     history.append(df)
+
 
 temp1 = pd.concat(history, ignore_index=True)
 temp2 = pd.concat(records, ignore_index=True)
