@@ -72,15 +72,15 @@ TotalPrizes.reset_index(inplace=True)
 
 col = st.columns((4, 4), gap='medium')
 with col[0]:
-    st.markdown('<h3 style="text-align: left;">Weekly Winners</h3>', unsafe_allow_html=True)
-    st.dataframe(WeeklyWinners, hide_index=True)
+    st.markdown('<h3 style="text-align: center;">Weekly Winners</h3>', unsafe_allow_html=True)
+    st.dataframe(WeeklyWinners, hide_index=True, width=1000)
 
 with col[1]:
-    st.markdown('<h3 style="text-align: left;">Winnings</h3>', unsafe_allow_html=True)
+    st.markdown('<h3 style="text-align: center;">Winnings</h3>', unsafe_allow_html=True)
     st.dataframe(TotalPrizes,
                 column_order=("Team", "$", "Wins"),
                 hide_index=True,
-                width=None,
+                width=1000,
                 column_config={
                 "Team": st.column_config.TextColumn(
                     "Team",

@@ -1,6 +1,6 @@
 # Fantasy DB - Rosters
 
-# Add reset filters button
+# Get rosters before playoff cuts?
 # Add savant metrics, not just visual
 # Add statistics filter (numeric, percentiles, etc)
 # Add drill down to bref, statcast, fgraphs with links
@@ -64,30 +64,41 @@ hitter = False
 pitcher = False
 if (selected_player != '1All') and (selected_year != '1All'):
     savant = True
+
+    # Hitter data
     hitter_ranks = pyb.statcast_batter_percentile_ranks(selected_year)
-    hitter_ranks = hitter_ranks[['player_name', 'xwoba', 'xba', 'xslg', 'exit_velocity', 'brl_percent', 'hard_hit_percent', 'bat_speed', 'chase_percent', 'whiff_percent', 'k_percent', 'bb_percent']]
-    hitter_ranks.columns = ['Name', 'xwOBA', 'xBA', 'xSLG', 'Exit Velocity', 'Barrel %', 'Hard-Hit %', 'Bat Speed', 'Chase %', 'Whiff %', 'K %', 'BB %']
-    hitter_ranks['Name'] = hitter_ranks['Name'].apply(lambda x: unidecode.unidecode(x) if isinstance(x, str) else x)
-    hitter_ranks[['last_name', 'first_name']] = hitter_ranks['Name'].str.split(',', expand=True).apply(lambda x: x.str.strip())
+    hitter_ranks['player_name'] = hitter_ranks['player_name'].apply(lambda x: unidecode.unidecode(x) if isinstance(x, str) else x)
+    hitter_ranks[['last_name', 'first_name']] = hitter_ranks['player_name'].str.split(',', expand=True).apply(lambda x: x.str.strip())
     hitter_ranks['Name'] = hitter_ranks['first_name'] + " " + hitter_ranks['last_name']
-    hitter_ranks.drop(['first_name', 'last_name'], axis=1, inplace=True)
     hitter_ranks = hitter_ranks[hitter_ranks['Name'] == selected_player]
-    hitter_ranks = hitter_ranks.melt(id_vars=['Name'], var_name='stat', value_name='value')
-
-    pitcher_ranks = pyb.statcast_pitcher_percentile_ranks(selected_year)
-    pitcher_ranks = pitcher_ranks[['player_name', 'xera', 'xba', 'fb_velocity', 'exit_velocity', 'chase_percent', 'whiff_percent', 'k_percent', 'bb_percent', 'brl_percent', 'hard_hit_percent']]
-    pitcher_ranks.columns = ['Name', 'xERA', 'xBA', 'Fastball Velocity', 'Exit Velocity', 'Chase %', 'Whiff %', 'K %', 'BB %', 'Barrel %', 'Hard-Hit %']
-    pitcher_ranks['Name'] = pitcher_ranks['Name'].apply(lambda x: unidecode.unidecode(x) if isinstance(x, str) else x)
-    pitcher_ranks[['last_name', 'first_name']] = pitcher_ranks['Name'].str.split(',', expand=True).apply(lambda x: x.str.strip())
-    pitcher_ranks['Name'] = pitcher_ranks['first_name'] + " " + pitcher_ranks['last_name']
-    pitcher_ranks.drop(['first_name', 'last_name'], axis=1, inplace=True)
-    pitcher_ranks = pitcher_ranks[pitcher_ranks['Name'] == selected_player]
-    pitcher_ranks = pitcher_ranks.melt(id_vars=['Name'], var_name='stat', value_name='value')
-
     if not hitter_ranks.empty:
         hitter = True
+        f_name = hitter_ranks['first_name'].iloc[0]
+        l_name = hitter_ranks['last_name'].iloc[0]
+        id = hitter_ranks['player_id'].iloc[0].astype(str)
+    hitter_ranks = hitter_ranks[['Name', 'xwoba', 'xba', 'xslg', 'exit_velocity', 'brl_percent', 'hard_hit_percent', 'bat_speed', 'chase_percent', 'whiff_percent', 'k_percent', 'bb_percent']]
+    hitter_ranks.columns = ['Name', 'xwOBA', 'xBA', 'xSLG', 'Exit Velocity', 'Barrel %', 'Hard-Hit %', 'Bat Speed', 'Chase %', 'Whiff %', 'K %', 'BB %']
+    hitter_ranks = hitter_ranks.melt(id_vars=['Name'], var_name='stat', value_name='value')
+
+    # Pitcher data
+    pitcher_ranks = pyb.statcast_pitcher_percentile_ranks(selected_year)
+    pitcher_ranks['player_name'] = pitcher_ranks['player_name'].apply(lambda x: unidecode.unidecode(x) if isinstance(x, str) else x)
+    pitcher_ranks[['last_name', 'first_name']] = pitcher_ranks['player_name'].str.split(',', expand=True).apply(lambda x: x.str.strip())
+    pitcher_ranks['Name'] = pitcher_ranks['first_name'] + " " + pitcher_ranks['last_name']
+    pitcher_ranks = pitcher_ranks[pitcher_ranks['Name'] == selected_player]
+    
     if not pitcher_ranks.empty:
         pitcher = True
+        f_name = pitcher_ranks['first_name'].iloc[0]
+        l_name = pitcher_ranks['last_name'].iloc[0]
+        id = pitcher_ranks['player_id'].iloc[0].astype(str)
+    pitcher_ranks = pitcher_ranks[['player_name', 'xera', 'xba', 'fb_velocity', 'exit_velocity', 'chase_percent', 'whiff_percent', 'k_percent', 'bb_percent', 'brl_percent', 'hard_hit_percent']]
+    pitcher_ranks.columns = ['Name', 'xERA', 'xBA', 'Fastball Velocity', 'Exit Velocity', 'Chase %', 'Whiff %', 'K %', 'BB %', 'Barrel %', 'Hard-Hit %']
+    pitcher_ranks = pitcher_ranks.melt(id_vars=['Name'], var_name='stat', value_name='value')
+
+# Used for Baseball ref link
+# bref_id = pyb.playerid_reverse_lookup(id)
+# bref_id = bref_id['key_bbref'].iloc[0]
 
 col = st.columns((1, 1), gap='medium')
 with col[0]:
@@ -97,6 +108,7 @@ with col[0]:
 if savant:
     with col[1]:
         st.markdown('<h3 style="text-align: left;">Percentile Ranks</h3>', unsafe_allow_html=True)
+        st.write(f"Data sourced from Baseball Savant: [link](https://baseballsavant.mlb.com/savant-player/{f_name}-{l_name}-{id})")
         if hitter:
             st.dataframe(hitter_ranks,
                     column_order=("stat", 'value'),

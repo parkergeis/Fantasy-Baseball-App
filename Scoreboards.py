@@ -5,14 +5,12 @@
 
 import streamlit as st
 import pandas as pd
-import altair as alt
 import numpy as np
 
 st.set_page_config(
     page_title="Fantasy Dashboard",
     layout="wide",
     initial_sidebar_state="auto")
-alt.themes.enable("dark")
 
 # Import data - needs manually uploaded and committed to GitHub
 WeeklyData_full = pd.read_excel('data/FantasyData.xlsx', sheet_name='WeeklyData')
