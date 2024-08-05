@@ -32,7 +32,7 @@ with st.sidebar:
     st.button('Reset Filters', on_click=reset_filters)
     
     team_list = list(Rosters.Owner.unique())
-    print(team_list)
+    team_list = team_list[team_list.isna() == False]
     team_list.sort()
     team_list.insert(0, 'All')
     selected_team = st.selectbox('Team', team_list, index=0, key='team')
