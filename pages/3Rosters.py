@@ -33,6 +33,7 @@ with st.sidebar:
     
     team_list = list(Rosters.Owner.unique())
     team_list = [team for team in team_list if team is not None]
+    print(team_list)
     team_list.sort()
     team_list.insert(0, 'All')
     selected_team = st.selectbox('Team', team_list, index=0, key='team')
