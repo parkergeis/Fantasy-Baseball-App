@@ -1,2 +1,0 @@
-espn_api
-espn_data_import
