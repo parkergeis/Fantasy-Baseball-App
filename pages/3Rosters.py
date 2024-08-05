@@ -9,6 +9,7 @@ import streamlit as st
 import pandas as pd
 import pybaseball as pyb
 import unidecode
+import math
 
 st.set_page_config(
     page_title="Fantasy Dashboard",
@@ -32,7 +33,7 @@ with st.sidebar:
     st.button('Reset Filters', on_click=reset_filters)
     
     team_list = list(Rosters.Owner.unique())
-    team_list = [team for team in team_list if team is not None]
+    team_list = [x for x in team_list if not isinstance(x, float) or not math.isnan(x)]
     print(team_list)
     team_list.sort()
     team_list.insert(0, 'All')
