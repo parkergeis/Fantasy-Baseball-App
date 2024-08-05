@@ -9,6 +9,7 @@ st.set_page_config(
     initial_sidebar_state="auto")
 
 # Import data - needs manually uploaded and committed to GitHub
+# WeeklyData = espn_data_import.WeeklyData
 WeeklyData = pd.read_excel('data/FantasyData.xlsx', sheet_name='WeeklyData')
 
 # Prepare Standings Dashboard

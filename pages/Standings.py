@@ -1,7 +1,5 @@
 # Fantasy DB - Standings
 
-# Add GB column
-
 import streamlit as st
 import pandas as pd
 import datetime

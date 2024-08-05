@@ -1,8 +1,8 @@
 # Fantasy DB - Scoreboards - Homepage
 
 # Add filter/button to see current/previous?
-# Import data logic into here + others
 
+# import espn_data_import
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -12,7 +12,8 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="auto")
 
-# Import data - needs manually uploaded and committed to GitHub
+# Select data from import
+# WeeklyData_full = espn_data_import.WeeklyData
 WeeklyData_full = pd.read_excel('data/FantasyData.xlsx', sheet_name='WeeklyData')
 WeeklyData_full['Record'] = WeeklyData_full.apply(lambda row: (row == 'WIN').sum(), axis=1).astype(str) + '-' + (WeeklyData_full.apply(lambda row: (row == 'LOSS').sum(), axis=1)).astype(str) + '-' + (WeeklyData_full.apply(lambda row: (row == 'TIE').sum(), axis=1)).astype(str)
 WeeklyData_full['Points'] = WeeklyData_full.apply(lambda row: (row == 'WIN').sum(), axis=1) + (WeeklyData_full.apply(lambda row: (row == 'TIE').sum(), axis=1) * 0.5)
@@ -20,18 +21,18 @@ WeeklyData_full['Points'] = WeeklyData_full.apply(lambda row: (row == 'WIN').sum
 # Filters
 with st.sidebar:  
     def reset_filters():
-            st.session_state.team = "1All"
+            st.session_state.team = "All"
             st.session_state.week = WeeklyData_full['Week'].max()
-            selected_team = '1All'
+            selected_team = 'All'
             selected_week = WeeklyData_full['Week'].max()
             WeeklyData = WeeklyData_full
     st.button('Reset Filters', on_click=reset_filters)
     
     team_list = list(WeeklyData_full.Team.unique())[::-1]
-    team_list.append('1All')
     team_list.sort()
+    team_list.insert(0, 'All')
     selected_team = st.selectbox('Team', team_list, index=0, key='team')
-    if selected_team == '1All':
+    if selected_team == 'All':
         WeeklyData = WeeklyData_full
     else:
         WeeklyData = WeeklyData_full[WeeklyData_full.Team == selected_team]
@@ -40,7 +41,7 @@ with st.sidebar:
     week_list.append(0)
     week_list.sort()
     # If team is selected, default to week 0, else current week
-    if selected_team == '1All':
+    if selected_team == 'All':
         selected_week = st.selectbox('Week (select 0 for all previous)', week_list, index=len(week_list)-1, key='week')
     else:
         selected_week = st.selectbox('Week (select 0 for all previous)', week_list, index=0, key='week')
@@ -78,7 +79,7 @@ def highlight_min(s):
     return ['color: gold' if v else '' for v in is_min]
 
 # Applying conditional formats
-if selected_team == '1All':
+if selected_team == 'All':
     style_df = PreviousWeeklyData.style.apply(highlight_val, col='Ro', val_col='R', axis=1).apply(highlight_val, col='HRo', val_col='HR', axis=1)\
     .apply(highlight_val, col='RBIo', val_col='RBI', axis=1).apply(highlight_val, col='SBo', val_col='SB', axis=1)\
     .apply(highlight_val, col='OBPo', val_col='OBP', axis=1).apply(highlight_val, col='Ko', val_col='K', axis=1)\
