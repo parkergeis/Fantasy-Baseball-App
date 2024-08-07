@@ -36,7 +36,7 @@ for col in columns:
 
 Wins.reset_index(inplace=True)
 print(Wins)
-Wins['Wins'] = Wins.sum(axis=1)
+Wins['Wins'] = Wins[columns].sum(axis=1)
 Wins.sort_values(by='Wins', inplace=True, ascending=False)
 
 # Creating H2H ranks dataframe
