@@ -93,15 +93,15 @@ if (selected_player != 'All') and (selected_year != 'All'):
     pitcher_ranks[['last_name', 'first_name']] = pitcher_ranks['player_name'].str.split(',', expand=True).apply(lambda x: x.str.strip())
     pitcher_ranks['Name'] = pitcher_ranks['first_name'] + " " + pitcher_ranks['last_name']
     pitcher_ranks = pitcher_ranks[pitcher_ranks['Name'] == selected_player]
-    
     if not pitcher_ranks.empty:
         pitcher = True
         f_name = pitcher_ranks['first_name'].iloc[0]
         l_name = pitcher_ranks['last_name'].iloc[0]
         f_name_url = f_name.replace(' ', '-')
         l_name_url = l_name.replace(' ', '-')
-        id = pitcher_ranks['player_id'].iloc[0].astype(str)
-    pitcher_ranks = pitcher_ranks[['player_name', 'xera', 'xba', 'fb_velocity', 'exit_velocity', 'chase_percent', 'whiff_percent', 'k_percent', 'bb_percent', 'brl_percent', 'hard_hit_percent']]
+        id = pitcher_ranks['player_id'].iloc[0]
+        id_url = pitcher_ranks['player_id'].iloc[0].astype(str)
+    pitcher_ranks = pitcher_ranks[['Name', 'xera', 'xba', 'fb_velocity', 'exit_velocity', 'chase_percent', 'whiff_percent', 'k_percent', 'bb_percent', 'brl_percent', 'hard_hit_percent']]
     pitcher_ranks.columns = ['Name', 'xERA', 'xBA', 'Fastball Velocity', 'Exit Velocity', 'Chase %', 'Whiff %', 'K %', 'BB %', 'Barrel %', 'Hard-Hit %']
     pitcher_ranks = pitcher_ranks.melt(id_vars=['Name'], var_name='stat', value_name='value')
 
@@ -111,12 +111,11 @@ if savant:
         batting_stats = pyb.batting_stats_bref(season = selected_year)  
         batting_stats = batting_stats[batting_stats.mlbID == id]
         batting_stats = batting_stats[['Name', 'Age', 'Tm', 'G', 'PA', 'AB', 'R', 'H', 'HR', 'RBI', 'SO', 'SB', 'BA', 'OBP', 'OPS']]
-        batting_stats = batting_stats.melt(id_vars=['Name', 'Age', 'Tm'], var_name='Stat', value_name='Value')
+
     if pitcher:
         pitching_stats = pyb.pitching_stats_bref(season = selected_year)
-        pitching_stats = pitching_stats[pitching_stats.mlbID == id]
-        pitching_stats = pitching_stats[['Name', 'Age', 'Tm', 'G', 'GS', 'W', 'L', 'SV', 'IP', 'ER', 'BB', 'ERA', 'WHIP', 'SO9', 'OPS']]
-        pitching_stats = pitching_stats.melt(id_vars=['Name', 'Age', 'Tm'], var_name='Stat', value_name='Value')
+        pitching_stats = pitching_stats[pitching_stats.mlbID == id_url]
+        pitching_stats = pitching_stats[['Name', 'Age', 'Tm', 'G', 'GS', 'W', 'L', 'SV', 'IP', 'ER', 'BB', 'ERA', 'WHIP', 'SO9']]
 
 # Used for URLs
 if (hitter) or (pitcher):
@@ -180,9 +179,9 @@ if savant:
     with col[1]:
         st.markdown('<h3 style="text-align: center;">Season Statistics</h3>', unsafe_allow_html=True)
         if hitter:
-            st.dataframe(batting_stats, column_order=('stat', 'value'), hide_index=True, width=1000)
+            st.dataframe(batting_stats, hide_index=True, width=1000)
         if pitcher:
-            st.dataframe(pitching_stats, column_order=('stat', 'value'), hide_index=True, width=1000)
+            st.dataframe(pitching_stats, hide_index=True, width=1000)
         st.write(f"Data sourced from [Baseball Reference](https://www.baseball-reference.com/players/{bref_abrv}/{bref_id}.shtml)")
         st.write(f"More data can be found on [Fangraphs](https://www.fangraphs.com/players/{f_name_url}-{l_name_url}/{fg_id}/stats)")
 else: 
