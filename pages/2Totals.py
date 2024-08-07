@@ -35,6 +35,7 @@ for col in columns:
     Wins[col] = Wins[col] + (WeeklyData_full.groupby('Team')[col].apply(lambda x: (x == 'TIE').sum())*.5)
 
 Wins.reset_index(inplace=True)
+print(Wins)
 Wins['Wins'] = Wins.sum(axis=1)
 Wins.sort_values(by='Wins', inplace=True, ascending=False)
 
