@@ -21,6 +21,8 @@ with st.sidebar:
     st.button('Reset Filters', on_click=reset_filters)
     selected_type = st.selectbox('Rank Type', ['Head to Head', 'Overall'], index=0, key='type')
     team_list = list(WeeklyData_full.Team.unique())[::-1]
+    # Remove nan values
+    team_list = [x for x in team_list if x == x]
     team_list.sort()
     team_list.insert(0, 'All')
     selected_team = st.selectbox('Team', team_list, index=0, key='team')

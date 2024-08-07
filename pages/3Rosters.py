@@ -180,9 +180,9 @@ if savant:
     with col[1]:
         st.markdown('<h3 style="text-align: center;">Season Statistics</h3>', unsafe_allow_html=True)
         if hitter:
-            st.dataframe(batting_stats, hide_index=True, width=1000)
+            st.dataframe(batting_stats, column_order=('stat', 'value'), hide_index=True, width=1000)
         if pitcher:
-            st.dataframe(pitching_stats, hide_index=True, width=1000)
+            st.dataframe(pitching_stats, column_order=('stat', 'value'), hide_index=True, width=1000)
         st.write(f"Data sourced from [Baseball Reference](https://www.baseball-reference.com/players/{bref_abrv}/{bref_id}.shtml)")
         st.write(f"More data can be found on [Fangraphs](https://www.fangraphs.com/players/{f_name_url}-{l_name_url}/{fg_id}/stats)")
 else: 
