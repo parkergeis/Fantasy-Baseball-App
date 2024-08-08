@@ -110,12 +110,14 @@ if savant:
     if hitter:
         batting_stats = pyb.batting_stats_bref(season = selected_year)  
         batting_stats = batting_stats[batting_stats.mlbID == id]
-        batting_stats = batting_stats[['Name', 'Age', 'Tm', 'G', 'PA', 'AB', 'R', 'H', 'HR', 'RBI', 'SO', 'SB', 'BA', 'OBP', 'OPS']]
+        batting_stats = batting_stats[['Name', 'Age', 'Tm', 'G', 'PA', 'AB', 'R', 'H', 'HR', 'RBI', 'SO', 'SB', 'BA', 'OBP', 'OPS']]  
+        batting_stats['Name'] = batting_stats['Name'].apply(lambda x: unidecode.unidecode(x) if isinstance(x, str) else x)
 
     if pitcher:
         pitching_stats = pyb.pitching_stats_bref(season = selected_year)
         pitching_stats = pitching_stats[pitching_stats.mlbID == id_url]
         pitching_stats = pitching_stats[['Name', 'Age', 'Tm', 'G', 'GS', 'W', 'L', 'SV', 'IP', 'ER', 'BB', 'ERA', 'WHIP', 'SO9']]
+        pitching_stats['Name'] = pitching_stats['Name'].apply(lambda x: unidecode.unidecode(x) if isinstance(x, str) else x)
 
 # Used for URLs
 if (hitter) or (pitcher):
