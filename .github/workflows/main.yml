@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'FantasyData.xlsx'
+  workflow_dispatch:
 
 jobs:
   build:
