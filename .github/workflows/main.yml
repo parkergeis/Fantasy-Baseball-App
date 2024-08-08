@@ -1,8 +1,9 @@
-name: Commit changes every hour
+name: Commit changes when FantasyData.xlsx changes
 
 on:
   schedule:
-    - cron:  '* * * * *'
+    - cron:  '30 5 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -16,7 +17,7 @@ jobs:
       run: |
         git config --global user.email "parkert.geis@icloud.com"
         git config --global user.name "Parker Geis"
-        git add FantasyData.xlsx
+        git add data/FantasyData.xlsx
         timestamp=$(date -u)
         git commit -m "Changes made to FantasyData.xlsx at ${timestamp}" || exit 0
         git push
