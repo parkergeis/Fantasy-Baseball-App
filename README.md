@@ -1,2 +1,2 @@
 # Fantasy-Baseball
- Houses the code for importing all ESPN Fantasy Baseball data.
+ The repository is used to house the code for the app found at this link: https://fantasy-baseball-botkinsbg.streamlit.app/
