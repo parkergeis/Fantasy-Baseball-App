@@ -12,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="auto")
 
 # Select data from import
-gc = gspread.service_account(filename='/Users/parkergeis/.config/gspread/seismic-bucksaw-427616-e6-7082af692c88.json')
+gc = gspread.service_account(filename='.gitignore/seismic-bucksaw-427616-e6-7082af692c88.json')
 
 sh = gc.open("FantasyData")
 worksheet = sh.sheet1
