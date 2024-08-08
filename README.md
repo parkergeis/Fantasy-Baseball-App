@@ -1,5 +1,5 @@
 # Fantasy-Baseball-App
- The fantasy baseball app is a great tool to help all fantasy teams in the ESPN Head-to-Head Categories Fantasy Baseball league. It is updated every morning to add the previous day's data.
+ The fantasy baseball app is a great tool to help all fantasy teams in the ESPN Head-to-Head Categories Fantasy Baseball league. For the best viewing experience, I recommend shrinking the side panel to allow the visuals to grow as much as possible. The data source is updated every morning to add the previous day's data. Upon initial release, the data will only reflect current if the changes are committed to the GitHub repository.
 
  This Streamlit web app can be found at https://fantasy-baseball-botkinsbg.streamlit.app/
 
