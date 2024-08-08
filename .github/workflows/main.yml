@@ -1,8 +1,9 @@
-name: Commit changes every hour
+name: Commit changes when FantasyData.xlsx changes
 
 on:
-  schedule:
-    - cron:  '* * * * *'
+  push:
+    paths:
+      - 'FantasyData.xlsx'
 
 jobs:
   build:
