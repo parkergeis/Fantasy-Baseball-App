@@ -1,9 +1,9 @@
 name: Commit changes when FantasyData.xlsx changes
 
 on:
-  push:
-    paths:
-      - 'data/FantasyData.xlsx'
+  schedule:
+    - cron:  '30 5 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
