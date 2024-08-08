@@ -1,0 +1,22 @@
+name: Commit changes every hour
+
+on:
+  schedule:
+    - cron:  '* * * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Commit and push if changed
+      run: |
+        git config --global user.email "parkert.geis@icloud.com"
+        git config --global user.name "Parker Geis"
+        git add FantasyBaseball.xlsx
+        timestamp=$(date -u)
+        git commit -m "Changes made to FantasyBaseball.xlsx at ${timestamp}" || exit 0
+        git push
