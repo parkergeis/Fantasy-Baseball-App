@@ -16,7 +16,7 @@ jobs:
       run: |
         git config --global user.email "parkert.geis@icloud.com"
         git config --global user.name "Parker Geis"
-        git add FantasyBaseball.xlsx
+        git add FantasyData.xlsx
         timestamp=$(date -u)
-        git commit -m "Changes made to FantasyBaseball.xlsx at ${timestamp}" || exit 0
+        git commit -m "Changes made to FantasyData.xlsx at ${timestamp}" || exit 0
         git push
