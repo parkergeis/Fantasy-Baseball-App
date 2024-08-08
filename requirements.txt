@@ -2,3 +2,4 @@ openpyxl
 unidecode
 pybaseball
 pandas
+gspread

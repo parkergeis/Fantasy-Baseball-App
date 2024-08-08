@@ -4,6 +4,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import gspread
 
 st.set_page_config(
     page_title="Fantasy Dashboard",
@@ -11,8 +12,13 @@ st.set_page_config(
     initial_sidebar_state="auto")
 
 # Select data from import
-# WeeklyData_full = espn_data_import.WeeklyData
-WeeklyData_full = pd.read_excel('data/FantasyData.xlsx', sheet_name='WeeklyData')
+gc = gspread.service_account(filename='/Users/parkergeis/.config/gspread/seismic-bucksaw-427616-e6-7082af692c88.json')
+
+sh = gc.open("FantasyData")
+worksheet = sh.sheet1
+data = worksheet.get_all_records()
+WeeklyData_full = pd.DataFrame(data)
+#WeeklyData_full = pd.read_excel('data/FantasyData.xlsx', sheet_name='WeeklyData')
 WeeklyData_full['Record'] = WeeklyData_full.apply(lambda row: (row == 'WIN').sum(), axis=1).astype(str) + '-' + (WeeklyData_full.apply(lambda row: (row == 'LOSS').sum(), axis=1)).astype(str) + '-' + (WeeklyData_full.apply(lambda row: (row == 'TIE').sum(), axis=1)).astype(str)
 WeeklyData_full['Points'] = WeeklyData_full.apply(lambda row: (row == 'WIN').sum(), axis=1) + (WeeklyData_full.apply(lambda row: (row == 'TIE').sum(), axis=1) * 0.5)
 
