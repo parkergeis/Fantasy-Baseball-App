@@ -1,6 +1,5 @@
 # Fantasy DB - Scoreboards - Homepage
 
-# import espn_data_import
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -11,7 +10,6 @@ st.set_page_config(
     initial_sidebar_state="auto")
 
 # Select data from import
-# WeeklyData_full = espn_data_import.WeeklyData
 WeeklyData_full = pd.read_excel('data/FantasyData.xlsx', sheet_name='WeeklyData')
 WeeklyData_full['Record'] = WeeklyData_full.apply(lambda row: (row == 'WIN').sum(), axis=1).astype(str) + '-' + (WeeklyData_full.apply(lambda row: (row == 'LOSS').sum(), axis=1)).astype(str) + '-' + (WeeklyData_full.apply(lambda row: (row == 'TIE').sum(), axis=1)).astype(str)
 WeeklyData_full['Points'] = WeeklyData_full.apply(lambda row: (row == 'WIN').sum(), axis=1) + (WeeklyData_full.apply(lambda row: (row == 'TIE').sum(), axis=1) * 0.5)
